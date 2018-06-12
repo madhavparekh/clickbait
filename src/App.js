@@ -3,15 +3,17 @@ import './App.css';
 
 import RenderImage from './containers/RenderImage';
 import images from './images.json';
+import RenderWarningModal from './components/RenderWarningModal';
 
 class App extends Component {
 	state = {
 		images,
-		guessedText: 'Click an image to being!',
-		guessed: true,
+		guessedText: 'Click an image to begin!',
+		clickedTwice: false,
 		clicked: false,
 		score: 0,
 		topScore: 0,
+		highScoreText: '',
 	};
 
 	onImageClicked = (id) => {
@@ -33,16 +35,28 @@ class App extends Component {
 
 	doubleClicked = () => {
 		this.setState({
+			clickedTwice: !this.state.clickedTwice,
+			guessedText: 'You guessed it incorrectly!',
 			images: this.state.images.filter((e) => {
 				e.clicked = false;
 				return e;
 			}),
-			guessedText: 'You guessed it incorrectly!',
+			highScoreText:
+				this.state.topScore < this.state.score
+					? 'High Score achived! Good Job!'
+					: 'Better luck next time!',
 			topScore:
 				this.state.topScore < this.state.score
 					? this.state.score
 					: this.state.topScore,
 			score: 0,
+		});
+	};
+
+	onModalClose = () => {
+		this.setState({
+			clickedTwice: !this.state.clickedTwice,
+			guessedText: 'Click an image to begin!',
 		});
 	};
 
@@ -72,7 +86,7 @@ class App extends Component {
 					</p>
 				</div>
 				<div className="container d-flex flex-wrap justify-content-around mt-2">
-					{this.state.images.map((e, i) => (
+					{!this.state.clickedTwice && this.state.images.map((e, i) => (
 						<RenderImage
 							key={i}
 							image={e}
@@ -81,6 +95,12 @@ class App extends Component {
 						/>
 					))}
 				</div>
+				{this.state.clickedTwice && (
+					<RenderWarningModal
+						text={this.state.highScoreText}
+						onRequestClose={this.onModalClose}
+					/>
+				)}
 			</div>
 		);
 	}
