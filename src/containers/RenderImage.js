@@ -5,7 +5,7 @@ class RenderImage extends Component {
 		if (!this.props.image.clicked) {
 			this.props.imageClicked(this.props.image.id);
 		} else {
-      this.props.doubleClicked();
+			this.props.doubleClicked();
 		}
 	};
 	render() {
